@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="Enter City Name", spellcheck="false">
+            <button><img src="images/search.png" alt="search"></button>
+        </div>
+        <div class="weather">
+            <img src="images/rain.png" class="weather-icon">
+            <h1 class="temp">22°C</h1>
+            <h2 class="city">New York</h2>
+            <div class="details">
+                <div class="col">
+                    <img src="images/humidity.png">
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <img src="images/wind.png">
+                    <div>
+                        <p class="wind">15 kmph</p>
+                        <p>wind</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+      <!-- ✅ SCRIPT INSIDE SAME FILE -->
+  <script>
+    const apiKey = "af468f7ebaf446a0b0c90635261601";
+    const apiUrl = "https://api.weatherapi.com/v1/current.json";
+
+    const searchBox = document.querySelector(".search input");
+    const searchBtn = document.querySelector(".search button");
+    const weatherIcon = document.querySelector(".weather-icon");
+
+    async function checkWeather(city) {
+      try {
+        const response = await fetch(
+          apiUrl + "?key=" + apiKey + "&q=" + city + "&aqi=yes"
+        );
+        const data = await response.json();
+
+        if (data.error) {
+          alert("City not found ❌");
+          return;
+        }
+
+        document.querySelector(".city").innerText = data.location.name;
+        document.querySelector(".temp").innerText =
+          Math.round(data.current.temp_c) + "°C";
+        document.querySelector(".humidity").innerText =
+          data.current.humidity + "%";
+        document.querySelector(".wind").innerText =
+          data.current.wind_kph + " km/h";
+
+        weatherIcon.src = "https:" + data.current.condition.icon;
+
+      } catch (error) {
+        alert("Something went wrong ❌");
+        console.error(error);
+      }
+    }
+
+    searchBtn.addEventListener("click", () => {
+      if (searchBox.value.trim()) {
+        checkWeather(searchBox.value.trim());
+      }
+    });
+
+    searchBox.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && searchBox.value.trim()) {
+        checkWeather(searchBox.value.trim());
+      }
+    });
+  </script>
+
+</body>
+</html>
